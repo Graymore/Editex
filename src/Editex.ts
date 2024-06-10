@@ -1,11 +1,13 @@
-import Text from "./components/Text"
+import Text from "./core/components/Text"
+import { Class } from "./types/core";
 import History from "./core/history";
 import Builder from "./core/builder";
 
 type EditexElementType = Element | null | string
 type EditexConfigType = {
-    components?: object[],
-    autofocus?: boolean
+    components?: Class[],
+    autofocus?: boolean,
+    defaultComponent?: Class,
 
     /*
     * Hooks
@@ -28,12 +30,10 @@ export default class Editex {
         this.autofocus = config?.autofocus || false
         this.history = new History()
         this.builder = new Builder({
-            history: this.history,
             element: this.computedElement(element),
-            components: config?.components || []
+            components: config?.components || [],
+            defaultComponent: config?.defaultComponent || Text
         })
-
-        this.init()
     }
 
     private computedElement(element: EditexElementType) {
@@ -53,10 +53,5 @@ export default class Editex {
 
     useBuilder() {
         return this.builder
-    }
-
-    private async init() {
-        await this.builder.createDefault()
-        if (this.autofocus) (this.history.get()[0].target as HTMLElement).focus()
     }
 }

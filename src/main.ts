@@ -1,6 +1,5 @@
 import './assets/app.scss'
 import Editex from './Editex';
-import Text from "./components/Text";
 
 const builded = () => {
     console.log('Editor is Builded!')
@@ -12,5 +11,5 @@ const rendered = () => {
 const editor = new Editex('#editor', {
     onBuilded: builded,
     onRendered: rendered,
-    autofocus: true
+    autofocus: true,
 })

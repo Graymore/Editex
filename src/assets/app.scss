@@ -1,3 +1,9 @@
+* {
+    font-family: Arial serif;
+    font-size: 16px;
+    font-weight: 400;
+}
+
 body {
     background-color: #15151e;
     padding: 200px;
@@ -6,12 +12,26 @@ body {
 .editor {
     display: flex;
     flex-direction: column;
-    background-color: #2e2d33;
+    background-color: #15151e;
 
     &__text {
-        font-size: 26px;
+        font-size: 16px;
         font-weight: 400;
         font-family: Arial serif;
         color: white;
+        padding: 10px;
+        caret-color: transparent;
+    }
+
+    &__wrapper {
+        &-caret {
+            position: absolute;
+            width: 3px;
+            border-radius: 10px;
+            height: 20px;
+            background-color: #6a78ff;
+            pointer-events: none;
+            transition: left .12s, top .12s;
+        }
     }
 }
