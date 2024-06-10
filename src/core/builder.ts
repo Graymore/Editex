@@ -1,8 +1,8 @@
-import { Block, Tool, Caret } from './'
-import { Class } from "../types/core";
+import { Block, Tool, Caret, UI } from './'
+import { Class, Element } from "../types/core";
 import {useEnter, useArrowUp, useArrowDown, useArrowLeft, useArrowRight} from "./shortcut.ts";
 interface BuilderConfig {
-    element: Element | null,
+    element: Element,
     components: Class[],
     defaultComponent: Class
 }
@@ -10,9 +10,9 @@ interface BuilderConfig {
 export default class Builder {
     protected components: Class[]
     protected defaultComponent: Class
-    protected rootElement: Element | null
-    protected rootWrapper: Element | null
-    protected rootCaret: Element | null
+    protected rootElement: Element
+    protected rootWrapper: Element
+    protected rootCaret: Element
 
     protected blocks: Block[]
     protected tools: Tool[]
@@ -30,24 +30,11 @@ export default class Builder {
     }
 
     private build() {
-        const root = document.createElement('div')
-        const wrapper = document.createElement('div')
-        const caret = document.createElement('span')
-        caret.classList.add('editor__wrapper-caret')
-        wrapper.classList.add('editor__wrapper')
-        root.appendChild(wrapper)
-        root.classList.add('editor')
-        this.rootElement?.replaceWith(root)
+        const { caret, root, wrapper }: any = new UI(this.rootElement).render()
         this.rootElement = root
         this.rootWrapper = wrapper
-        this.rootWrapper.appendChild(caret)
         this.rootCaret = caret
-
         this.create(this.defaultComponent)
-    }
-
-    private getBlock() {
-        return new Block().render()
     }
 
     create(component: Class) {
@@ -70,11 +57,16 @@ export default class Builder {
         const updated_at = date.toDateString()
 
         component.element = render
-        component._caret = new Caret(component.element)
 
-        useEnter(component.element, () => {
-            this.create(this.defaultComponent)
-        })
+
+        /*
+            Bind shortcuts
+        */
+
+        // Create new defaultComponent (Text or other) if press Enter button
+        useEnter(component.element, () => this.create(this.defaultComponent))
+
+
         useArrowUp(component.element, () => {
             const index = this.blocks.findIndex(block => block._uid === component._uid)
             if (index > 0) this.blocks[index - 1].element.focus()
@@ -104,7 +96,11 @@ export default class Builder {
             component._caret?.update(this.rootCaret)
         })
 
-        const block = this.getBlock()
+        component.element.addEventListener('select', () => {
+            console.log('SELECT')
+        })
+
+        const block = new Block().render()
         block.appendChild(render)
 
         this.rootWrapper?.appendChild(block)
@@ -117,5 +113,9 @@ export default class Builder {
 
     private createTool(component: Tool) {
         console.log('tess')
+    }
+
+    private binds(component: Block) {
+
     }
 }

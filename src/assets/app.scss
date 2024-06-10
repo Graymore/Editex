@@ -24,14 +24,16 @@ body {
     }
 
     &__wrapper {
-        &-caret {
-            position: absolute;
-            width: 3px;
-            border-radius: 10px;
-            height: 20px;
-            background-color: #6a78ff;
-            pointer-events: none;
-            transition: left .12s, top .12s;
-        }
+
+    }
+
+    &__caret {
+        position: absolute;
+        width: 3px;
+        border-radius: 10px;
+        height: 20px;
+        background-color: #6a78ff;
+        pointer-events: none;
+        transition: left .12s, top .12s;
     }
 }
