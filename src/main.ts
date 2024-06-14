@@ -8,8 +8,4 @@ const rendered = () => {
     console.log('Editor is Rendered!')
 }
 
-const editor = new Editex('#editor', {
-    onBuilded: builded,
-    onRendered: rendered,
-    autofocus: true,
-})
+const editor = new Editex('#editor')

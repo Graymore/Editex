@@ -1,42 +1,50 @@
-import Text from "./core/components/Text"
-import { Class } from "./types/core";
-import History from "./core/history";
-import Builder from "./core/builder";
-
-type EditexElementType = Element | null | string
-type EditexConfigType = {
-    components?: Class[],
-    autofocus?: boolean,
-    defaultComponent?: Class,
-
-    /*
-    * Hooks
-    */
-    onBuilded?: () => any,
-    onRendered?: () => any,
-}
-
+import { Caret } from './core'
 export default class Editex {
-    protected autofocus: boolean
-    protected history: History
-    protected builder: Builder
+    protected element: Element | null
+    protected Caret: Caret | null
 
-    private readonly onBuilded: (() => any) | undefined
-    private readonly onRendered: (() => any) | undefined
+    constructor(element: Element, config?: object) {
+        this.element = this.getEditor(element)
+        this.Caret = null
+        this.render()
+    }
 
-    constructor(element: EditexElementType, config?: EditexConfigType) {
-        this.onBuilded = config?.onBuilded || undefined
-        this.onRendered = config?.onRendered || undefined
-        this.autofocus = config?.autofocus || false
-        this.history = new History()
-        this.builder = new Builder({
-            element: this.computedElement(element),
-            components: config?.components || [],
-            defaultComponent: config?.defaultComponent || Text
+    private render() {
+        document.addEventListener('DOMContentLoaded', () => {
+            const editor = document.createElement('div')
+            editor.classList.add('editor')
+
+            const wrapper = document.createElement('div')
+            wrapper.classList.add('wrapper')
+
+            const block = document.createElement('div')
+            block.classList.add('block')
+            block.contentEditable = 'true'
+
+            wrapper.appendChild(block)
+            editor.appendChild(wrapper)
+
+            this.element?.replaceWith(editor)
+
+            block.focus()
+
+            this.Caret = new Caret()
+
+            this.Caret.render(wrapper).then(() => {
+                wrapper.addEventListener('input', () => {
+                    this.Caret?.update()
+                })
+                block.addEventListener('focus', () => {
+                    this.Caret?.show()
+                })
+                block.addEventListener('blur', () => {
+                    this.Caret?.hide()
+                })
+            })
         })
     }
 
-    private computedElement(element: EditexElementType) {
+    private getEditor(element: Element) {
         switch (typeof element) {
             case "string": {
                 return document.querySelector(element)
@@ -45,13 +53,5 @@ export default class Editex {
                 return element
             }
         }
-    }
-
-    useHistory() {
-        return this.history
-    }
-
-    useBuilder() {
-        return this.builder
     }
 }

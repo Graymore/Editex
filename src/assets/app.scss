@@ -1,39 +1,25 @@
-* {
-    font-family: Arial serif;
-    font-size: 16px;
-    font-weight: 400;
-}
-
 body {
-    background-color: #15151e;
+    font-family: Arial, serif;
+    background-color: #eaeaea;
     padding: 200px;
 }
 
 .editor {
-    display: flex;
-    flex-direction: column;
-    background-color: #15151e;
+    background-color: white;
+    border-radius: 7px;
+    width: 100%;
+}
 
-    &__text {
-        font-size: 16px;
-        font-weight: 400;
-        font-family: Arial serif;
-        color: white;
-        padding: 10px;
-        caret-color: transparent;
-    }
+.block {
+    padding: 20px;
+    font-size: 18px;
+}
 
-    &__wrapper {
-
-    }
-
-    &__caret {
-        position: absolute;
-        width: 3px;
-        border-radius: 10px;
-        height: 20px;
-        background-color: #6a78ff;
-        pointer-events: none;
-        transition: left .12s, top .12s;
-    }
+.caret {
+    position: absolute;
+    width: 3px;
+    border-radius: 10px;
+    background-color: #6a78ff;
+    pointer-events: none;
+    transition: left .12s, top .12s;
 }

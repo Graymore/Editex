@@ -1,15 +1,5 @@
-import Component from "./component";
-import Block from './block'
-import Tool from './tool'
-import Caret from './caret'
-import UI from './ui'
-import { styles } from './styles'
+import Caret from "./Caret";
 
 export {
-    Component,
-    Block,
-    Tool,
     Caret,
-    UI,
-    styles,
 }
