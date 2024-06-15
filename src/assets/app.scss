@@ -11,7 +11,7 @@ body {
 }
 
 .block {
-    padding: 20px;
+    padding: 5px;
     font-size: 18px;
 }
 
@@ -22,4 +22,8 @@ body {
     background-color: #6a78ff;
     pointer-events: none;
     transition: left .12s, top .12s;
+}
+
+.text {
+    background-color: #e3e5ff;
 }

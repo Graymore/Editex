@@ -1,11 +1,11 @@
 import './assets/app.scss'
 import Editex from './Editex';
 
-const builded = () => {
-    console.log('Editor is Builded!')
-}
-const rendered = () => {
-    console.log('Editor is Rendered!')
-}
 
+
+const output = document.getElementById('output')
 const editor = new Editex('#editor')
+
+document.getElementById('button').addEventListener('click', () => {
+    editor.save().then(r => console.log(r))
+})

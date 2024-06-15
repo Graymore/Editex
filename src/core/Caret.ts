@@ -1,46 +1,39 @@
 export default class Caret {
-    protected caret: HTMLDivElement | null
+    public element: Element
 
-    constructor() {
-        this.caret = null
+    constructor(element: Element) {
+        this.element = element
     }
 
-    async render(element: Element | null) {
-        const caret = document.createElement('div')
-        caret.classList.add('caret')
-        this.caret = caret
-        element?.appendChild(caret)
-        this.update()
+    selection() {
+        let selection = document.getSelection()
+        let range = new Range
+
+        // if (selection !== null && selection.anchorNode) {
+        //
+        //     range.setStart(selection.anchorNode, 0)
+        //     range.setEnd(selection.anchorNode, selection.anchorOffset)
+        //
+        //     return {
+        //         start: range.toString().length,
+        //         end: range.toString().length,
+        //         lastChild: selection.anchorNode === this.element.lastChild
+        //     }
+        // }
     }
 
-    update() {
-        const selection = window.getSelection()
-        const range = selection.getRangeAt(0)
-        const rect = range.getBoundingClientRect()
+    setSelection(pos: number) {
+        const selection = document.getSelection()
+        const range = document.createRange()
 
-        if (range.collapsed && range.startOffset === 0) {
-            this.hide()
-        } else {
-            this.show()
+        range.setStart(this.element.lastChild, pos)
+        range.collapse(true)
+
+        if (selection !== null) {
+            selection.removeAllRanges()
+            selection.addRange(range)
         }
 
-        if (this.caret) {
-            this.caret.style.left = '10px'
-            this.caret.style.left = `${rect.x}px`
-            this.caret.style.top = `${rect.y}px`
-            this.caret.style.height = `${rect.height}px`
-        }
-    }
-
-    show() {
-        this.caret.style.display = 'block'
-    }
-
-    hide() {
-        this.caret.style.display = 'none'
-    }
-
-    binds() {
-
+        this.element.focus()
     }
 }

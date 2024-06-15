@@ -1,50 +1,22 @@
-import { Caret } from './core'
+import { Class, EditexConfig, EditexSaveComponentData, EditexSaveData } from './types/editex'
+import Builder from "./core/Builder";
+import State from "./core/State";
+import Text from "./components/Text";
 export default class Editex {
-    protected element: Element | null
-    protected Caret: Caret | null
+    protected builder: Builder
+    protected state: State
 
-    constructor(element: Element, config?: object) {
-        this.element = this.getEditor(element)
-        this.Caret = null
-        this.render()
-    }
-
-    private render() {
-        document.addEventListener('DOMContentLoaded', () => {
-            const editor = document.createElement('div')
-            editor.classList.add('editor')
-
-            const wrapper = document.createElement('div')
-            wrapper.classList.add('wrapper')
-
-            const block = document.createElement('div')
-            block.classList.add('block')
-            block.contentEditable = 'true'
-
-            wrapper.appendChild(block)
-            editor.appendChild(wrapper)
-
-            this.element?.replaceWith(editor)
-
-            block.focus()
-
-            this.Caret = new Caret()
-
-            this.Caret.render(wrapper).then(() => {
-                wrapper.addEventListener('input', () => {
-                    this.Caret?.update()
-                })
-                block.addEventListener('focus', () => {
-                    this.Caret?.show()
-                })
-                block.addEventListener('blur', () => {
-                    this.Caret?.hide()
-                })
-            })
+    constructor(element: Element | string, config?: EditexConfig) {
+        let el = this.getEditor(element)
+        this.state = new State()
+        this.builder = new Builder({
+            element: el,
+            state: this.state
         })
+        this.builder.render(config?.defaultComponent || null)
     }
 
-    private getEditor(element: Element) {
+    private getEditor(element: Element | string) {
         switch (typeof element) {
             case "string": {
                 return document.querySelector(element)
@@ -52,6 +24,48 @@ export default class Editex {
             case "object": {
                 return element
             }
+        }
+    }
+
+    useBuilder() {
+        return this.builder
+    }
+
+    useState() {
+        return this.state
+    }
+
+   async save() {
+        const components = this.state.get().components
+        let html = ''
+        let componentsOutput: EditexSaveComponentData[] = []
+
+        await components.forEach((component, index) => {
+            const output = component.class.save().replace(/\&nbsp;/g, '')
+            html = html + output
+            if (index !== components.length && output.trim() !== '') html = html + `<br><br>`
+
+            componentsOutput.push({
+                name: component.class.name,
+                HTMLData: output.trim() === '' ? null : output,
+                state: component.class.state()
+            })
+        })
+
+        let date = new Date();
+        let datetime = date.getDate() + "/"
+            + (date.getMonth()+1)  + "/"
+            + date.getFullYear() + " @ "
+            + date.getHours() + ":"
+            + date.getMinutes() + ":"
+            + date.getSeconds();
+
+        html = html.replace(/\&nbsp;/g, '').slice(0, -8)
+
+        return {
+            components: componentsOutput,
+            HTMLData: html.trim() === '' ? null : html,
+            time: datetime,
         }
     }
 }
