@@ -1,13 +1,11 @@
 import { BuilderConfig, BuilderComponent } from "../types/builder"
 import { Class } from "../types/editex"
 
-import { UID } from "../utils/uid"
+import { UID, bindOfBlock, useCaret } from "../utils"
 
 import State from "./State"
-import Caret from "./Caret"
 
 import Text from '../components/Text'
-import {c} from "vite/dist/node/types.d-aGj9QkWt";
 
 export default class Builder {
     protected element: Element | null
@@ -33,7 +31,7 @@ export default class Builder {
         this.state = config.state
     }
 
-    render(componentClass: Class | null) {
+    render(componentClass: Class | null): void {
         if (componentClass === null) return this.render(Text)
 
         const block = document.createElement('div')
@@ -47,7 +45,6 @@ export default class Builder {
         component = {
             uid: UID(),
             class: component,
-            caret: new Caret(componentElement),
             // @ts-ignore
             render: componentElement,
             block: block,
@@ -55,41 +52,71 @@ export default class Builder {
         }
         componentElement.focus()
         this.state.createComponent(component)
+        this.state.selectedComponentUid = component.uid
         this.binds(component)
     }
 
     binds(component: BuilderComponent) {
+        const bind = bindOfBlock(component.block)
+        const caret = useCaret()
 
-        component.caret.bind()
+        bind.enter(e => {
+            this.render(Text)
+            e.preventDefault()
+        })
 
-
-        component.block.onkeydown = e => {
-            if (!e.shiftKey && e.key === 'Enter') {
-                this.render(Text)
-                e.preventDefault()
-            }
-            if (e.key === 'ArrowUp') {
+        bind.arrowUp(e => {
+            const selection = caret.selection()
+            if (selection) {
                 const current = this.state.components.findIndex(c => c.uid === component.uid)
                 const prev = current - 1
-                const selection = component.caret.getSelection()
+                const position = selection.start
+                const element = this.state.components[prev]?.render
+                const child = component.render.firstChild
 
-                if (selection.lastChild) {
+                if (element && selection.node === child) {
+                    caret.setRange(element.lastChild, position)
+                    element.focus()
                     e.preventDefault()
-                    if (prev > -1) this.state.components[prev].caret.setSelection(selection.position)
                 }
+
+                if (child === null) {
+                    caret.setRange(element.lastChild, element.lastChild?.textContent?.length || 0)
+                    element.focus()
+                    e.preventDefault()
+                }
+
+                if (current === 0 && selection.node === component.render.firstChild) e.preventDefault()
             }
-            if (e.key === 'ArrowDown') {
+        })
+
+        bind.arrowDown(e => {
+            const selection = caret.selection()
+            if (selection) {
                 const current = this.state.components.findIndex(c => c.uid === component.uid)
                 const next = current + 1
-                const selection = component.caret.getSelection()
+                const position = selection.start
+                const element = this.state.components[next]?.render
+                const child = component.render.lastChild
 
-                if (selection.lastChild) {
+                if (element && next < this.state.components.length && selection.node === child) {
+                    caret.setRange(element.firstChild, position)
+                    element.focus()
                     e.preventDefault()
-                    if (next < this.state.components.length) {
-                        this.state.components[next].caret.setSelection(selection.position)
-                    }
                 }
+
+                if (child === null) {
+                    caret.setRange(element.firstChild, element.firstChild?.textContent?.length || 0)
+                    element.focus()
+                    e.preventDefault()
+                }
+
+                if (current === this.state.components.length - 1 && selection.node === component.render.lastChild) e.preventDefault()
             }
-        }
+        })
+
+        bind.arrowRight(e => {
+
+        })
     }
 }

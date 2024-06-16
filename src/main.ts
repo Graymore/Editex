@@ -1,11 +1,9 @@
 import './assets/app.scss'
 import Editex from './Editex';
 
+import { useCaret } from './utils/caret'
 
 
-const output = document.getElementById('output')
 const editor = new Editex('#editor')
 
-document.getElementById('button').addEventListener('click', () => {
-    editor.save().then(r => console.log(r))
-})
+const button = document.getElementById('button')

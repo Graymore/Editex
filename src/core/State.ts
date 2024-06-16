@@ -3,6 +3,7 @@ import { BuilderComponent } from "../types/builder";
 
 export default class State {
     public components: BuilderComponent[] | [] = []
+    public selectedComponentUid: string | null = null
 
     get() {
         return {
