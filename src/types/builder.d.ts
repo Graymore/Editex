@@ -10,8 +10,7 @@ export interface BuilderConfig {
 export interface BuilderComponent {
     uid: string,
     class: any,
-    caret: Caret,
     render: any,
-    block: HTMLDivElement,
+    block: HTMLElement | null,
     created: string
 }

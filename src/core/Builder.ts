@@ -4,56 +4,47 @@ import { Class } from "../types/editex"
 import { UID, bindOfBlock, useCaret } from "../utils"
 
 import State from "./State"
+import DOM from "./DOM"
 
 import Text from '../components/Text'
 
 export default class Builder {
-    protected element: Element | null
-
-    protected wrapperElement: Element | null
-
     protected state: State
+    protected dom: DOM
 
     constructor(config: BuilderConfig) {
-        this.element = config.element
-
-        const editor = document.createElement('div')
-        editor.classList.add('editor')
-
-        const wrapper = document.createElement('div')
-        wrapper.classList.add('wrapper')
-
-        this.wrapperElement = wrapper
-
-        editor.appendChild(wrapper)
-        this.element?.replaceWith(editor)
-
+        this.dom = new DOM({
+            element: config.element
+        })
+        this.dom.render()
         this.state = config.state
     }
 
     render(componentClass: Class | null): void {
         if (componentClass === null) return this.render(Text)
-
-        const block = document.createElement('div')
-        block.classList.add('block')
-
-        if (this.wrapperElement !== null) this.wrapperElement.appendChild(block)
-
-        let component = new componentClass()
-        let componentElement = component.render()
-        block.appendChild(componentElement)
-        component = {
+        const component = new componentClass()
+        const mutateComponent: BuilderComponent = {
             uid: UID(),
             class: component,
-            // @ts-ignore
-            render: componentElement,
-            block: block,
+            render: component.render(),
+            block: null,
             created: new Date().getDate().toString()
         }
-        componentElement.focus()
-        this.state.createComponent(component)
-        this.state.selectedComponentUid = component.uid
-        this.binds(component)
+
+        if (this.state.components.length === 0) {
+            mutateComponent.block = this.dom.insertBlock(mutateComponent.render)
+            this.state.insertComponent(mutateComponent)
+        } else {
+            const activeComponent = this.state.getActiveComponent()
+            if (activeComponent) {
+                mutateComponent.block = this.dom.insertAfterBlock(activeComponent.block, mutateComponent.render)
+                this.state.insertAfterComponent(mutateComponent)
+            }
+        }
+
+        this.binds(mutateComponent)
+        mutateComponent.render.focus()
+        mutateComponent.render.addEventListener('focus', () => this.state.activeComponentUid = mutateComponent.uid)
     }
 
     binds(component: BuilderComponent) {
