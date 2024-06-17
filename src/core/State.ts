@@ -4,6 +4,7 @@ import { BuilderComponent } from "../types/builder";
 export default class State {
     public components: BuilderComponent[] = []
     public activeComponentUid: string | null = null
+    public popupActive: boolean = false
 
     get() {
         return {
@@ -13,6 +14,10 @@ export default class State {
 
     getActiveComponent() {
         return this.components.find(c => this.activeComponentUid === c.uid)
+    }
+
+    getPopupStatus() {
+        return this.popupActive
     }
 
     insertComponent(component: BuilderComponent) {

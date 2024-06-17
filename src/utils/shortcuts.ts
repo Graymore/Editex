@@ -25,5 +25,11 @@ export function bindOfBlock(element: HTMLElement | null) {
                 if (e.key === 'ArrowRight') return callback(e)
             })
         },
+        keydown(callback: (e: KeyboardEvent) => any) {
+            element?.addEventListener('keydown', e => callback(e))
+        },
+        keyup(callback: (e: KeyboardEvent) => any) {
+            element?.addEventListener('keyup', e => callback(e))
+        },
     }
 }

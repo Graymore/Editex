@@ -2,6 +2,7 @@ export type Class = { new(...args: any[]): any }
 
 export interface EditexConfig {
     defaultComponent: Class | null
+    popup: Class | null
 }
 
 export interface EditexSaveComponentData {

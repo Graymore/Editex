@@ -4,26 +4,30 @@ body {
     padding: 10px;
 }
 
-.editor {
+.editex {
     background-color: white;
     border-radius: 7px;
     width: 100%;
-}
 
-.block {
-    padding: 5px;
-    font-size: 18px;
-}
+    &__block {
+        padding: 5px;
+        font-size: 18px;
+    }
 
-.caret {
-    position: absolute;
-    width: 3px;
-    border-radius: 10px;
-    background-color: #6a78ff;
-    pointer-events: none;
-    transition: left .12s, top .12s;
-}
+    &__popup {
+        position: absolute;
+        width: 220px;
+        height: 270px;
+        background-color: white;
+        box-shadow: 0 0 6px rgba(0, 0, 0, 0.1);
+        border: 1px solid #f5f5f5;
+        border-radius: 10px;
+        pointer-events: none;
+        opacity: 0;
 
-.text {
-    background-color: #e3e5ff;
+        &_active {
+            pointer-events: auto;
+            opacity: 1;
+        }
+    }
 }

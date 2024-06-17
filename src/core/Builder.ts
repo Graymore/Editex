@@ -106,8 +106,13 @@ export default class Builder {
             }
         })
 
-        bind.arrowRight(e => {
-
+        bind.keyup(e => {
+            if (e.key === '/') {
+                const sel = caret.selection()
+                if (sel) this.dom.showPopup(sel.rect.x, sel.rect.y)
+            } else {
+                this.dom.hidePopup()
+            }
         })
     }
 }

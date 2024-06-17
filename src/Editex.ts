@@ -1,10 +1,14 @@
 import { Class, EditexConfig, EditexSaveComponentData, EditexSaveData } from './types/editex'
 import Builder from "./core/Builder";
 import State from "./core/State";
+import Popup from "./core/Popup";
+
 import Text from "./components/Text";
+
 export default class Editex {
     protected builder: Builder
     protected state: State
+    protected popup: Popup
 
     constructor(element: Element | string, config?: EditexConfig) {
         let el = this.getEditor(element)
@@ -13,6 +17,7 @@ export default class Editex {
             element: el,
             state: this.state
         })
+        this.popup = new Popup()
         this.builder.render(config?.defaultComponent || null)
     }
 

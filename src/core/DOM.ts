@@ -4,10 +4,12 @@ import classes from "../utils/classes";
 export default class DOM {
     public element: Element | null
     public wrapper: Element | null
+    public popup: HTMLElement | null
 
     constructor(config: DOMConfig) {
         this.element = config.element
         this.wrapper = null
+        this.popup = null
     }
 
     render() {
@@ -21,6 +23,16 @@ export default class DOM {
 
         editor.appendChild(wrapper)
         this.element?.replaceWith(editor)
+
+        const popup = document.createElement('div')
+        popup.classList.add(classes.popup)
+        this.popup = popup
+
+        const popupWrapper = document.createElement('div')
+        popupWrapper.classList.add(classes.popupWrapper)
+
+        popup.appendChild(popupWrapper)
+        document.body.appendChild(popup)
     }
 
     renderBlock() {
@@ -43,5 +55,21 @@ export default class DOM {
         afterBlock?.insertAdjacentElement('afterend', block)
 
         return block
+    }
+
+    showPopup(x: number, y: number) {
+        if (this.popup !== null) {
+            this.popup.style.left = x + 'px'
+            this.popup.style.top = y + 10 + 'px'
+            this.popup.classList.add(classes.popup_active)
+        }
+    }
+
+    hidePopup() {
+        this.popup?.classList.remove(classes.popup_active)
+    }
+
+    togglePopup() {
+        this.popup?.classList.toggle(classes.popup_active)
     }
 }
