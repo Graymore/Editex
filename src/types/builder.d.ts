@@ -1,10 +1,10 @@
-import { Class } from "./editex";
 import State from "../core/State";
-import Caret from "../core/Caret";
+import Popup from "../components/Popup";
 
 export interface BuilderConfig {
-    element: Element | null,
+    element: Element | null
     state: State
+    popup: Popup
 }
 
 export interface BuilderComponent {

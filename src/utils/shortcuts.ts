@@ -31,5 +31,15 @@ export function bindOfBlock(element: HTMLElement | null) {
         keyup(callback: (e: KeyboardEvent) => any) {
             element?.addEventListener('keyup', e => callback(e))
         },
+        selectionAll(callback: (e: KeyboardEvent) => any) {
+            element?.addEventListener('keydown', e => {
+                if (e.ctrlKey && e.code === 'KeyA') return callback(e)
+            })
+        },
+        removeSelection(callback: (e: KeyboardEvent) => any) {
+            element?.addEventListener('keydown', e => {
+                if (!e.shiftKey) return callback(e)
+            })
+        },
     }
 }

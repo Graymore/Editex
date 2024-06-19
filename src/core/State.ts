@@ -1,8 +1,10 @@
 import {Class} from "../types/editex";
 import { BuilderComponent } from "../types/builder";
+import classes from "../utils/classes";
 
 export default class State {
     public components: BuilderComponent[] = []
+    public selectionComponents: BuilderComponent[] = []
     public activeComponentUid: string | null = null
     public popupActive: boolean = false
 
@@ -29,7 +31,37 @@ export default class State {
         const activeIndex = this.components.findIndex(c => c.uid === this.activeComponentUid)
         this.components.splice(activeIndex + 1, 0, component)
         this.activeComponentUid = component.uid
+    }
 
-        console.log(this.components)
+    selectionAllComponents() {
+        this.components.forEach(component => component.block?.classList.add(classes.block_selection))
+        this.selectionComponents = this.components
+    }
+
+    selectionComponent(component: BuilderComponent) {
+        component.block?.classList.add(classes.block_selection)
+        this.selectionComponents.push(component)
+    }
+
+    selectionComponentClear(component: BuilderComponent) {
+        const index = this.selectionComponents.findIndex(c => c.uid === component.uid)
+        this.selectionComponents[index].block?.classList.remove(classes.block_selection)
+        this.selectionComponents.slice(index, 1)
+    }
+
+    selectionToggleComponent(component: BuilderComponent) {
+        const selected = this.selectionComponents.findIndex(c => c.uid === component.uid)
+        if (selected === -1) {
+            component.block?.classList.add(classes.block_selection)
+            this.selectionComponents.push(component)
+        } else {
+            component.block?.classList.remove(classes.block_selection)
+            this.selectionComponents.splice(selected, 1)
+        }
+    }
+
+    selectionComponentClearAll() {
+        this.selectionComponents.forEach(component => component.block?.classList.remove(classes.block_selection))
+        this.selectionComponents = []
     }
 }

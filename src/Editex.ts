@@ -1,7 +1,7 @@
 import { Class, EditexConfig, EditexSaveComponentData, EditexSaveData } from './types/editex'
 import Builder from "./core/Builder";
 import State from "./core/State";
-import Popup from "./core/Popup";
+import Popup from "./components/Popup";
 
 import Text from "./components/Text";
 
@@ -11,13 +11,21 @@ export default class Editex {
     protected popup: Popup
 
     constructor(element: Element | string, config?: EditexConfig) {
+
+        window.editex = {
+            onRenderComponent: config?.onRenderComponent || (() => {}),
+            onRenderBeforeComponent: config?.onRenderBeforeComponent || (() => {}),
+            onRenderedComponent: config?.onRenderedComponent || (() => {}),
+        }
+
         let el = this.getEditor(element)
         this.state = new State()
+        this.popup = new Popup()
         this.builder = new Builder({
             element: el,
-            state: this.state
+            state: this.state,
+            popup: this.popup
         })
-        this.popup = new Popup()
         this.builder.render(config?.defaultComponent || null)
     }
 

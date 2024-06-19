@@ -12,6 +12,12 @@ body {
     &__block {
         padding: 5px;
         font-size: 18px;
+        background-color: unset;
+        transition: background-color .075s;
+
+        &_selection {
+            background-color: #c5c5c5;
+        }
     }
 
     &__popup {

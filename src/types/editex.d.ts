@@ -1,8 +1,24 @@
+export interface EditexHooks {
+    onRenderBeforeComponent?: () => any
+    onRenderComponent?: () => any
+    onRenderedComponent?: () => any
+}
+
+export interface EditexEvents {}
+
+export interface EditexGlobalObject extends EditexHooks, EditexEvents {}
+
+declare global {
+    interface Window {
+        editex: EditexGlobalObject
+    }
+}
+
 export type Class = { new(...args: any[]): any }
 
-export interface EditexConfig {
-    defaultComponent: Class | null
-    popup: Class | null
+export interface EditexConfig extends EditexHooks {
+    defaultComponent?: Class | null
+    popup?: Class | null
 }
 
 export interface EditexSaveComponentData {
