@@ -1,10 +1,12 @@
-import State from "../core/State";
-import Popup from "../components/Popup";
+import { State, Handler } from '../core'
+import { Popup, Text } from '../components'
 
 export interface BuilderConfig {
-    element: Element | null
-    state: State
-    popup: Popup
+    element: Element
+    State: State
+    Handler: Handler
+    Popup: Popup
+    Text: Text
 }
 
 export interface BuilderComponent {

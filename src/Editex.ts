@@ -1,32 +1,61 @@
-import { Class, EditexConfig, EditexSaveComponentData, EditexSaveData } from './types/editex'
-import Builder from "./core/Builder";
-import State from "./core/State";
-import Popup from "./components/Popup";
-
-import Text from "./components/Text";
+import { EditexConfig, EditexSaveComponentData, EditexCore } from './types'
+import { Builder, Handler, State } from './core'
+import {Image, Popup, Text} from './components'
+import { useCaret } from "./utils";
 
 export default class Editex {
-    protected builder: Builder
-    protected state: State
-    protected popup: Popup
+
+    /**
+     * Core modules
+     */
+    protected Builder: Builder | null = null
+    protected State: State
+    protected Handler: Handler
+
+    /**
+     * Main Components
+     */
+    protected Popup: Popup
+    protected Text: Text
 
     constructor(element: Element | string, config?: EditexConfig) {
 
-        window.editex = {
+        const editexGlobalObject = 'editex' in window ? window.editex : (window as any).editex = {}
+        const editexElement = this.getEditor(element)
+        const editexDefineComponents = config?.components || [Text, Image]
+
+        // Init Core
+        this.Handler = new Handler({
             onRenderComponent: config?.onRenderComponent || (() => {}),
             onRenderBeforeComponent: config?.onRenderBeforeComponent || (() => {}),
             onRenderedComponent: config?.onRenderedComponent || (() => {}),
+        },
+            editexGlobalObject
+        )
+
+        this.State = new State(editexDefineComponents)
+
+        const core: EditexCore = {
+            handler: this.Handler,
+            state: this.State,
+            useCaret: useCaret,
         }
 
-        let el = this.getEditor(element)
-        this.state = new State()
-        this.popup = new Popup()
-        this.builder = new Builder({
-            element: el,
-            state: this.state,
-            popup: this.popup
-        })
-        this.builder.render(config?.defaultComponent || null)
+        this.Popup = new Popup(core)
+        this.Text = new Text()
+
+        if (editexElement !== null && editexElement !== undefined) {
+            this.Builder = new Builder({
+                element: editexElement,
+                State: this.State,
+                Text: this.Text,
+                Handler: this.Handler,
+                Popup: this.Popup
+            })
+            this.Builder.render(config?.defaultComponent || null)
+        } else {
+            this.Handler.warnings().elementIsNotFound()
+        }
     }
 
     private getEditor(element: Element | string) {
@@ -41,15 +70,15 @@ export default class Editex {
     }
 
     useBuilder() {
-        return this.builder
+        return this.Builder
     }
 
     useState() {
-        return this.state
+        return this.State
     }
 
    async save() {
-        const components = this.state.get().components
+        const components = this.State.get().components
         let html = ''
         let componentsOutput: EditexSaveComponentData[] = []
 

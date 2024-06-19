@@ -1,29 +1,30 @@
-import { BuilderConfig, BuilderComponent } from "../types/builder"
-import { Class } from "../types/editex"
+import { BuilderConfig, BuilderComponent } from "../types"
+import { Class } from "../types"
 
 import { UID, bindOfBlock, useCaret } from "../utils"
 
 import DOM from "./DOM"
 
-import Text from '../components/Text'
-import Popup from '../components/Popup'
+import { Text, Popup } from '../components'
+
+import { State, Handler } from '.'
+
 import classes from "../utils/classes";
 
-import Core from "./Core";
-
-export default class Builder extends Core {
-    protected dom: DOM
-    protected popup: Popup
+export default class Builder {
+    protected DOM: DOM
+    protected Popup: Popup
+    protected State: State
+    protected Handler: Handler
 
     constructor(config: BuilderConfig) {
-        super()
-        this.dom = new DOM({
-            element: config.element
-        })
-        this.dom.render()
-        this.State = config.state
-        this.popup = config.popup
-        this.popup.render()
+        this.State = config.State
+        this.Popup = config.Popup
+        this.Handler = config.Handler
+
+
+        this.DOM = new DOM({ element: config.element })
+        this.DOM.render()
     }
 
     render(componentClass: Class | null): void {
@@ -31,10 +32,6 @@ export default class Builder extends Core {
 
         this.Handler.hook().onRenderBeforeComponent()
         this.Handler.hook().onRenderComponent()
-
-        this.Handler.editor().input(() => {
-            console.log('test')
-        })
 
         const component = new componentClass()
         const mutateComponent: BuilderComponent = {
@@ -45,20 +42,28 @@ export default class Builder extends Core {
             created: new Date().getDate().toString()
         }
         if (this.State.components.length === 0) {
-            mutateComponent.block = this.dom.insertBlock(mutateComponent.render)
+            mutateComponent.block = this.DOM.insertBlock(mutateComponent.render)
             this.State.insertComponent(mutateComponent)
         } else {
             const activeComponent = this.State.getActiveComponent()
             if (activeComponent) {
-                mutateComponent.block = this.dom.insertAfterBlock(activeComponent.block, mutateComponent.render)
+                mutateComponent.block = this.DOM.insertAfterBlock(activeComponent.block, mutateComponent.render)
                 this.State.insertAfterComponent(mutateComponent)
             }
         }
 
+        mutateComponent.render.addEventListener('focus', () => {
+            this.State.activeComponentUid = mutateComponent.uid
+            mutateComponent.block?.classList.add(classes.block_active)
+        })
+        mutateComponent.render.addEventListener('blur', () => {
+            mutateComponent.block?.classList.remove(classes.block_active)
+        })
+        mutateComponent.render.addEventListener('input', (e: InputEvent) => this.Handler.editor().call('input', e))
+        this.Handler.hook().onRenderedComponent()
+
         this.binds(mutateComponent)
         mutateComponent.render.focus()
-        mutateComponent.render.addEventListener('focus', () => this.State.activeComponentUid = mutateComponent.uid)
-        this.Handler.hook().onRenderedComponent()
     }
 
     binds(component: BuilderComponent) {
@@ -67,6 +72,7 @@ export default class Builder extends Core {
 
         bind.enter(e => {
             this.render(Text)
+            this.Handler.editor().call('enter', e)
             e.preventDefault()
         })
 

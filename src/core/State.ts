@@ -1,12 +1,16 @@
-import {Class} from "../types/editex";
-import { BuilderComponent } from "../types/builder";
+import { BuilderComponent, Class } from "../types";
 import classes from "../utils/classes";
 
 export default class State {
     public components: BuilderComponent[] = []
     public selectionComponents: BuilderComponent[] = []
+    public importedComponents: Class[]
     public activeComponentUid: string | null = null
     public popupActive: boolean = false
+
+    constructor(components: Class[]) {
+        this.importedComponents = components
+    }
 
     get() {
         return {

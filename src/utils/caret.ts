@@ -10,11 +10,12 @@ export const useCaret = () => {
                 const range = Math.abs(start - end)
                 const rect = rangeSel.getBoundingClientRect()
                 const node = selection.anchorNode
+                const parentNode = selection.anchorNode?.parentNode
                 const length = selection.anchorNode?.textContent?.length
                 const contents = rangeSel.cloneContents()
                 const contentsText = rangeSel.cloneContents().textContent
 
-                return { start, end, range, node, length, contents, contentsText, rect }
+                return { start, end, range, node, length, contents, contentsText, rect, parentNode }
             }
         },
 
