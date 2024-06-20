@@ -10,12 +10,17 @@ import {
     EditexConfig,
     EditexCore,
     Class,
+    EditexComponentType,
 } from "./editex";
 
-import { HandlerHooks, HandlerEvent } from "./handler";
+import { HandlerHooks, HandlerEvent, HandlerEventTypes } from "./handler";
+
+import { KeyboardEventItem, KeyboardEventType } from "./keyboard";
 
 export {
     type HandlerHooks,
+    type HandlerEvent,
+    type HandlerEventTypes,
 
     type EditexEvents,
     type EditexHooks,
@@ -24,10 +29,15 @@ export {
     type EditexSaveComponentData,
     type EditexConfig,
     type EditexCore,
+    type EditexComponentType,
 
     type Class,
+
     type DOMConfig,
+
     type BuilderComponent,
     type BuilderConfig,
-    type HandlerEvent,
+
+    type KeyboardEventItem,
+    type KeyboardEventType,
 }

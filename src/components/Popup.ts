@@ -7,6 +7,15 @@ export default class Popup {
     public core: EditexCore
 
     constructor(core: EditexCore) {
+
+        core.keyboard.arrowUp(() => console.log('arrowUp'))
+        core.keyboard.arrowDown(() => console.log('arrowDown'))
+
+        core.keyboard.shiftArrowUp(() => console.log('shiftArrowUp'))
+        core.keyboard.shiftArrowDown(() => console.log('shiftArrowDown'))
+        core.keyboard.ctrlArrowUp(() => console.log('ctrlArrowUp'))
+        core.keyboard.ctrlArrowDown(() => console.log('ctrlArrowDown'))
+
         this.core = core
         const editor = core.handler.editor()
         const components = core.state.importedComponents

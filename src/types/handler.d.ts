@@ -8,3 +8,5 @@ export interface HandlerEvent {
     name: string,
     f: (args: any) => any
 }
+
+export type HandlerEventTypes = 'input' | 'enter'

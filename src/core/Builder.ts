@@ -1,4 +1,4 @@
-import { BuilderConfig, BuilderComponent } from "../types"
+import { BuilderConfig, BuilderComponent, EditexCore } from "../types"
 import { Class } from "../types"
 
 import { UID, bindOfBlock, useCaret } from "../utils"
@@ -16,12 +16,13 @@ export default class Builder {
     protected Popup: Popup
     protected State: State
     protected Handler: Handler
+    protected core: EditexCore
 
-    constructor(config: BuilderConfig) {
+    constructor(config: BuilderConfig, core: EditexCore) {
         this.State = config.State
         this.Popup = config.Popup
         this.Handler = config.Handler
-
+        this.core = core
 
         this.DOM = new DOM({ element: config.element })
         this.DOM.render()
@@ -59,7 +60,7 @@ export default class Builder {
         mutateComponent.render.addEventListener('blur', () => {
             mutateComponent.block?.classList.remove(classes.block_active)
         })
-        mutateComponent.render.addEventListener('input', (e: InputEvent) => this.Handler.editor().call('input', e))
+        mutateComponent.render.addEventListener('input', (e: Event) => this.Handler.editor().call('input', e))
         this.Handler.hook().onRenderedComponent()
 
         this.binds(mutateComponent)
@@ -69,6 +70,9 @@ export default class Builder {
     binds(component: BuilderComponent) {
         const bind = bindOfBlock(component.block)
         const caret = useCaret()
+
+
+        this.core.keyboard.arrowUp(e => console.log(e))
 
         bind.enter(e => {
             this.render(Text)
@@ -108,6 +112,7 @@ export default class Builder {
 
                 if (child === null) {
                     caret.setRange(element.lastChild, element.lastChild?.textContent?.length || 0)
+                    element.focus()
                     e.preventDefault()
                 }
 

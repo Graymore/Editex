@@ -1,4 +1,4 @@
-import { EditexHooks, EditexGlobalObject, HandlerEvent } from "../types";
+import { EditexHooks, EditexGlobalObject, HandlerEvent, HandlerEventTypes } from "../types";
 
 export default class Handler {
     protected prefix: string = 'Editex: '
@@ -43,8 +43,8 @@ export default class Handler {
 
     public editor() {
         return {
-            call: (eventType: string, args?: any) => this.invoke(eventType, args),
-            on: (eventType: string, callback: (event: any) => any) => this.events.push({ name: eventType, f: callback }),
+            call: (eventType: HandlerEventTypes, args?: any) => this.invoke(eventType, args),
+            on: (eventType: HandlerEventTypes, callback: (event: any) => any) => this.events.push({ name: eventType, f: callback }),
         }
     }
 }

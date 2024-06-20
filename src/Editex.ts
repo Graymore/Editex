@@ -1,7 +1,7 @@
 import { EditexConfig, EditexSaveComponentData, EditexCore } from './types'
-import { Builder, Handler, State } from './core'
-import {Image, Popup, Text} from './components'
-import { useCaret } from "./utils";
+import { Builder, Handler, State, Keyboard } from './core'
+import { Image, Popup, Text } from './components'
+import { useCaret, useSelection } from "./utils";
 
 export default class Editex {
 
@@ -10,6 +10,7 @@ export default class Editex {
      */
     protected Builder: Builder | null = null
     protected State: State
+    protected Keyboard: Keyboard
     protected Handler: Handler
 
     /**
@@ -34,11 +35,14 @@ export default class Editex {
         )
 
         this.State = new State(editexDefineComponents)
+        this.Keyboard = new Keyboard()
 
         const core: EditexCore = {
             handler: this.Handler,
             state: this.State,
+            keyboard: this.Keyboard,
             useCaret: useCaret,
+            useSelection: useSelection,
         }
 
         this.Popup = new Popup(core)
@@ -51,7 +55,7 @@ export default class Editex {
                 Text: this.Text,
                 Handler: this.Handler,
                 Popup: this.Popup
-            })
+            }, core)
             this.Builder.render(config?.defaultComponent || null)
         } else {
             this.Handler.warnings().elementIsNotFound()
