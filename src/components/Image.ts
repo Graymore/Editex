@@ -21,7 +21,11 @@ export default class Image {
     }
 
     save() {
-        return this.text
+        return true
+    }
+
+    output() {
+
     }
 
     state() {

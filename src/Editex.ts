@@ -73,28 +73,24 @@ export default class Editex {
         }
     }
 
-    useBuilder() {
-        return this.Builder
-    }
-
-    useState() {
-        return this.State
-    }
-
    async save() {
         const components = this.State.get().components
         let html = ''
         let componentsOutput: EditexSaveComponentData[] = []
 
         await components.forEach((component, index) => {
-            const output = component.class.save().replace(/\&nbsp;/g, '')
-            html = html + output
-            if (index !== components.length && output.trim() !== '') html = html + `<br><br>`
+            const componentSaveFunction = async () => await component.class.save()
 
-            componentsOutput.push({
-                name: component.class.name,
-                HTMLData: output.trim() === '' ? null : output,
-                state: component.class.state()
+            componentSaveFunction().then(() => {
+                const output = component.class.output().replace(/\&nbsp;/g, '')
+                html = html + output
+                if (index !== components.length && output.trim() !== '') html = html + `<br><br>`
+
+                componentsOutput.push({
+                    name: component.class.name,
+                    HTMLData: output.trim() === '' ? null : output,
+                    state: component.class.state()
+                })
             })
         })
 
