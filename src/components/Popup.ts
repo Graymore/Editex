@@ -1,4 +1,5 @@
 import { EditexCore } from "../types";
+import { useMenu } from "../utils";
 import classes from "../utils/classes";
 
 export default class Popup {
@@ -22,9 +23,7 @@ export default class Popup {
         popup.appendChild(popupWrapper)
         document.body.appendChild(popup)
 
-        editor.on('input', event => {
-            this.parse(event.target.textContent)
-        })
+        editor.on('input', event => useMenu().findCommand(event.target.textContent) ? this.show() : this.hide())
         editor.on('enter', () => this.hide())
 
         components.forEach(component => {
@@ -48,25 +47,6 @@ export default class Popup {
 
             this.popupWrapper?.appendChild(item)
         })
-    }
-
-    private parse(str: string) {
-        const command = '/'
-        const index = str.lastIndexOf(command)
-
-        if (index > -1) {
-            const prevSymbol = str[index - 1]
-            const nextSymbol = str[index + 1]
-            const line = str.slice(index, str.length)
-
-            !prevSymbol || prevSymbol.trim() === '' ? this.show() : this.hide()
-            if (nextSymbol && nextSymbol.trim() === '') this.hide()
-            if (line.indexOf(' ') !== -1 || line[line.length - 1].trim() === '') this.hide()
-
-            return true
-        }
-
-        return this.hide()
     }
 
     show() {
