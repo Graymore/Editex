@@ -1,4 +1,4 @@
-export default class Text {
+export default class Image {
     public text: string
     public title: string
     public icon: string
@@ -11,9 +11,11 @@ export default class Text {
 
     render() {
         const div = document.createElement('div')
-        div.classList.add('text')
-        div.contentEditable = 'true'
-        div.addEventListener('input', () => this.text = div.innerHTML)
+
+        const image = document.createElement('img')
+        image.src = 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRXJA32WU4rBpx7maglqeEtt3ot1tPIRWptxA&s'
+
+        div.appendChild(image)
 
         return div
     }

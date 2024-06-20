@@ -53,14 +53,14 @@ export default class Builder {
             }
         }
 
-        mutateComponent.render.addEventListener('focus', () => {
+        mutateComponent.block.addEventListener('focus', () => {
             this.State.activeComponentUid = mutateComponent.uid
             mutateComponent.block?.classList.add(classes.block_active)
         })
-        mutateComponent.render.addEventListener('blur', () => {
+        mutateComponent.block.addEventListener('blur', () => {
             mutateComponent.block?.classList.remove(classes.block_active)
         })
-        mutateComponent.render.addEventListener('input', (e: Event) => this.Handler.editor().call('input', e))
+        mutateComponent.block.addEventListener('input', (e: Event) => this.Handler.editor().call('input', e))
         this.Handler.hook().onRenderedComponent()
 
         this.binds(mutateComponent)
@@ -70,9 +70,6 @@ export default class Builder {
     binds(component: BuilderComponent) {
         const bind = bindOfBlock(component.block)
         const caret = useCaret()
-
-
-        this.core.keyboard.arrowUp(e => console.log(e))
 
         bind.enter(e => {
             this.render(Text)
@@ -89,11 +86,12 @@ export default class Builder {
                 const prevComponent = this.State.components[prev]
                 const position = selection.start
                 const element = prevComponent?.render
+                const block = prevComponent?.block
                 const child = component.render.firstChild
 
                 if (element) {
                     if (e.shiftKey) {
-                        element.focus()
+                        block.focus()
                         e.preventDefault()
                         if (prevComponent.block?.classList.contains(classes.block_selection)) {
                             this.State.selectionComponentClear(currentComponent)
@@ -107,13 +105,13 @@ export default class Builder {
 
                     if (element && selection.node === child) {
                         caret.setRange(element.lastChild, position)
-                        element.focus()
+                        block.focus()
                         e.preventDefault()
                     }
 
                     if (child === null) {
                         caret.setRange(element.lastChild, element.lastChild?.textContent?.length || 0)
-                        element.focus()
+                        block.focus()
                         e.preventDefault()
                     }
 
@@ -131,11 +129,12 @@ export default class Builder {
                 const nextComponent = this.State.components[next]
                 const position = selection.start
                 const element = nextComponent?.render
+                const block = nextComponent?.block
                 const child = component.render.lastChild
 
                 if (element) {
                     if (e.shiftKey) {
-                        element.focus()
+                        block.focus()
                         e.preventDefault()
                         if (nextComponent.block?.classList.contains(classes.block_selection)) {
                             this.State.selectionComponentClear(currentComponent)
@@ -149,13 +148,13 @@ export default class Builder {
 
                     if (element && next < this.State.components.length && selection.node === child) {
                         caret.setRange(element.firstChild, position)
-                        element.focus()
+                        block.focus()
                         e.preventDefault()
                     }
 
                     if (child === null) {
                         caret.setRange(element.firstChild, element.firstChild?.textContent?.length || 0)
-                        element.focus()
+                        block.focus()
                         e.preventDefault()
                     }
 
@@ -167,10 +166,6 @@ export default class Builder {
         bind.selectionAll(e => {
             e.preventDefault()
             this.State.selectionAllComponents()
-        })
-
-        bind.removeSelection(e => {
-            if (this.State.selectionComponents.length > 0) this.State.selectionComponentClearAll()
         })
     }
 }

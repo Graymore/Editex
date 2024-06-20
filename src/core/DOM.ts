@@ -26,6 +26,7 @@ export default class DOM {
     renderBlock() {
         const block = document.createElement('div')
         block.classList.add(classes.block)
+        block.tabIndex = 0
         return block
     }
 
