@@ -88,37 +88,37 @@ export default class Builder {
                 const prev = currentIndex - 1
                 const prevComponent = this.State.components[prev]
                 const position = selection.start
-                const element = prevComponent.render
+                const element = prevComponent?.render
                 const child = component.render.firstChild
 
-                if (e.shiftKey) {
-                    element.focus()
-                    e.preventDefault()
-                    if (prevComponent.block?.classList.contains(classes.block_selection)) {
-                        this.State.selectionComponentClear(currentComponent)
-                        this.State.selectionComponentClear(prevComponent)
-                    } else {
-                        this.State.selectionComponent(currentComponent)
-                        this.State.selectionComponent(prevComponent)
+                if (element) {
+                    if (e.shiftKey) {
+                        element.focus()
+                        e.preventDefault()
+                        if (prevComponent.block?.classList.contains(classes.block_selection)) {
+                            this.State.selectionComponentClear(currentComponent)
+                            this.State.selectionComponentClear(prevComponent)
+                        } else {
+                            this.State.selectionComponent(currentComponent)
+                            this.State.selectionComponent(prevComponent)
+                        }
+                        return
                     }
-                    return
+
+                    if (element && selection.node === child) {
+                        caret.setRange(element.lastChild, position)
+                        element.focus()
+                        e.preventDefault()
+                    }
+
+                    if (child === null) {
+                        caret.setRange(element.lastChild, element.lastChild?.textContent?.length || 0)
+                        element.focus()
+                        e.preventDefault()
+                    }
+
+                    if (currentIndex === 0 && selection.node === component.render.firstChild) e.preventDefault()
                 }
-
-                if (element && selection.node === child) {
-                    caret.setRange(element.lastChild, position)
-                    element.focus()
-                    e.preventDefault()
-                }
-
-                if (child === null) {
-                    caret.setRange(element.lastChild, element.lastChild?.textContent?.length || 0)
-                    element.focus()
-                    e.preventDefault()
-                }
-
-
-
-                if (currentIndex === 0 && selection.node === component.render.firstChild) e.preventDefault()
             }
         })
 
@@ -130,35 +130,37 @@ export default class Builder {
                 const next = currentIndex + 1
                 const nextComponent = this.State.components[next]
                 const position = selection.start
-                const element = this.State.components[next]?.render
+                const element = nextComponent?.render
                 const child = component.render.lastChild
 
-                if (e.shiftKey) {
-                    element.focus()
-                    e.preventDefault()
-                    if (nextComponent.block?.classList.contains(classes.block_selection)) {
-                        this.State.selectionComponentClear(currentComponent)
-                        this.State.selectionComponentClear(nextComponent)
-                    } else {
-                        this.State.selectionComponent(currentComponent)
-                        this.State.selectionComponent(nextComponent)
+                if (element) {
+                    if (e.shiftKey) {
+                        element.focus()
+                        e.preventDefault()
+                        if (nextComponent.block?.classList.contains(classes.block_selection)) {
+                            this.State.selectionComponentClear(currentComponent)
+                            this.State.selectionComponentClear(nextComponent)
+                        } else {
+                            this.State.selectionComponent(currentComponent)
+                            this.State.selectionComponent(nextComponent)
+                        }
+                        return
                     }
-                    return
-                }
 
-                if (element && next < this.State.components.length && selection.node === child) {
-                    caret.setRange(element.firstChild, position)
-                    element.focus()
-                    e.preventDefault()
-                }
+                    if (element && next < this.State.components.length && selection.node === child) {
+                        caret.setRange(element.firstChild, position)
+                        element.focus()
+                        e.preventDefault()
+                    }
 
-                if (child === null) {
-                    caret.setRange(element.firstChild, element.firstChild?.textContent?.length || 0)
-                    element.focus()
-                    e.preventDefault()
-                }
+                    if (child === null) {
+                        caret.setRange(element.firstChild, element.firstChild?.textContent?.length || 0)
+                        element.focus()
+                        e.preventDefault()
+                    }
 
-                if (currentIndex === this.State.components.length - 1 && selection.node === component.render.lastChild) e.preventDefault()
+                    if (currentIndex === this.State.components.length - 1 && selection.node === component.render.lastChild) e.preventDefault()
+                }
             }
         })
 
