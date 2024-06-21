@@ -28,43 +28,58 @@ export default class Builder {
         this.DOM.render()
     }
 
-    render(componentClass: Class | null): void {
-        if (componentClass === null) return this.render(Text)
+    renderComponent(componentClass: Class | null): void {
+        // Если componentClass не доступен, рендер Text
+        if (componentClass === null) return this.renderComponent(Text)
 
+        // Инициализация хуков
         this.Handler.hook().onRenderBeforeComponent()
         this.Handler.hook().onRenderComponent()
 
+        // Инициализия компонента
         const component = new componentClass()
-        const mutateComponent: BuilderComponent = {
+
+        // Мутация экземпляра компонента
+        const componentCopy: BuilderComponent = {
             uid: UID(),
             class: component,
             render: component.render(),
-            block: null,
+            block: document.createElement('div'),
             created: new Date().getDate().toString()
         }
+
+        // Если компонент первый
         if (this.State.components.length === 0) {
-            mutateComponent.block = this.DOM.insertBlock(mutateComponent.render)
-            this.State.insertComponent(mutateComponent)
-        } else {
+            componentCopy.block = this.DOM.insertBlock(componentCopy.render)
+            this.State.insertComponent(componentCopy)
+        }
+
+        // Если компонент не первый
+        if (this.State.components.length > 0) {
             const activeComponent = this.State.getActiveComponent()
             if (activeComponent) {
-                mutateComponent.block = this.DOM.insertAfterBlock(activeComponent.block, mutateComponent.render)
-                this.State.insertAfterComponent(mutateComponent)
+                componentCopy.block = this.DOM.insertAfterBlock(activeComponent.block, componentCopy.render)
+                this.State.insertAfterComponent(componentCopy)
             }
         }
 
-        mutateComponent.block.addEventListener('focus', () => {
-            this.State.activeComponentUid = mutateComponent.uid
-            mutateComponent.block?.classList.add(classes.block_active)
-        })
-        mutateComponent.block.addEventListener('blur', () => {
-            mutateComponent.block?.classList.remove(classes.block_active)
-        })
-        mutateComponent.block.addEventListener('input', (e: Event) => this.Handler.editor().call('input', e))
+        // Бинды
+        componentCopy.block.onfocus = () => {
+            this.State.activeComponentUid = componentCopy.uid
+            componentCopy.block?.classList.add(classes.block_active)
+        }
+        componentCopy.block.onblur = () => {
+            componentCopy.block?.classList.remove(classes.block_active)
+        }
+        componentCopy.block.oninput = e => {
+            this.Handler.editor().call('input', e)
+        }
+
+        // Хук
         this.Handler.hook().onRenderedComponent()
 
-        this.binds(mutateComponent)
-        mutateComponent.render.focus()
+        const editable = componentCopy.render.querySelector('div[contenteditable]')
+        editable !== null ? editable.focus() : componentCopy.block.focus()
     }
 
     binds(component: BuilderComponent) {

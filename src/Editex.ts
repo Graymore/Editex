@@ -56,7 +56,7 @@ export default class Editex {
                 Handler: this.Handler,
                 Popup: this.Popup
             }, core)
-            this.Builder.render(config?.defaultComponent || null)
+            this.Builder.renderComponent(config?.defaultComponent || null)
         } else {
             this.Handler.warnings().elementIsNotFound()
         }
