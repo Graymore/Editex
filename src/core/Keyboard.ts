@@ -1,6 +1,6 @@
-import {KeyboardEventItem, KeyboardEventType} from "../types";
-
 enum KeyboardEvents {
+    Enter = 'Enter',
+    ShiftEnter = 'ShiftEnter',
     ArrowUp = 'ArrowUp',
     ArrowDown = 'ArrowDown',
     ShiftArrowUp = 'ShiftArrowUp',
@@ -14,56 +14,46 @@ enum KeyboardEvents {
 }
 
 export default class Keyboard {
-    private events: KeyboardEventItem[] = []
-
-    constructor() {
-        document.addEventListener('keydown', e => this.keydown(e))
-        document.addEventListener('keyup', e => this.keyup(e))
+    private bind(element: Element, callback: (e?: any) => any, eventType: KeyboardEvents) {
+        element.addEventListener('keydown', (ev) => {
+            if (this.shortcuts((ev as KeyboardEvent)) === eventType) return callback(ev)
+        })
     }
 
-    private listen(name: KeyboardEvents, eventType: KeyboardEventType, callback: (e?: any) => any) {
-        this.events.push({ name: name, event: eventType, f: callback })
-    }
-
-    private keydown(e: KeyboardEvent) { this.shortcuts(e, 'keydown') }
-    private keyup(e: KeyboardEvent) { this.shortcuts(e, 'keyup') }
-
-    private shortcuts(e: KeyboardEvent, event: KeyboardEventType) {
+    private shortcuts(e: KeyboardEvent) {
         // Shortcuts with Shift
         if (e.shiftKey) {
-            if (e.key === 'ArrowUp') return this.callEvents(KeyboardEvents.ShiftArrowUp, event, e)
-            if (e.key === 'ArrowDown') return this.callEvents(KeyboardEvents.ShiftArrowDown, event, e)
-            if (e.key === 'ArrowLeft') return this.callEvents(KeyboardEvents.ShiftArrowLeft, event, e)
-            if (e.key === 'ArrowRight') return this.callEvents(KeyboardEvents.ShiftArrowRight, event, e)
+            if (e.key === 'ArrowUp') return KeyboardEvents.ShiftArrowUp
+            if (e.key === 'ArrowDown') return KeyboardEvents.ShiftArrowDown
+            if (e.key === 'ArrowLeft') return KeyboardEvents.ShiftArrowLeft
+            if (e.key === 'ArrowRight') return KeyboardEvents.ShiftArrowRight
+            if (e.key === 'Enter') return KeyboardEvents.ShiftEnter
         }
 
         // Shortcuts with Ctrl
         if (e.ctrlKey) {
-            if (e.key === 'ArrowUp') return this.callEvents(KeyboardEvents.CtrlArrowUp, event, e)
-            if (e.key === 'ArrowDown') return this.callEvents(KeyboardEvents.CtrlArrowDown, event, e)
+            if (e.key === 'ArrowUp') return KeyboardEvents.CtrlArrowUp
+            if (e.key === 'ArrowDown') return KeyboardEvents.CtrlArrowDown
         }
 
         // Simple shortcuts
-        if (e.key === 'ArrowUp') return this.callEvents(KeyboardEvents.ArrowUp, event, e)
-        if (e.key === 'ArrowDown') return this.callEvents(KeyboardEvents.ArrowDown, event, e)
-        if (e.key === 'ArrowLeft') return this.callEvents(KeyboardEvents.ArrowLeft, event, e)
-        if (e.key === 'ArrowRight') return this.callEvents(KeyboardEvents.ArrowRight, event, e)
+        if (e.key === 'ArrowUp') return KeyboardEvents.ArrowUp
+        if (e.key === 'ArrowDown') return KeyboardEvents.ArrowDown
+        if (e.key === 'ArrowLeft') return KeyboardEvents.ArrowLeft
+        if (e.key === 'ArrowRight') return KeyboardEvents.ArrowRight
+        if (e.key === 'Enter') return KeyboardEvents.Enter
     }
 
-    private callEvents(name: KeyboardEvents, event: KeyboardEventType, e?: Event) {
-        this.events.forEach(item => {
-            if (item.name === name && item.event === event) item.f(e)
-        })
-    }
-
-    public arrowUp(callback: (e: any) => any, eventType: KeyboardEventType = 'keydown') { this.listen(KeyboardEvents.ArrowUp, eventType, callback) }
-    public arrowDown(callback: (e: any) => any, eventType: KeyboardEventType = 'keydown') { this.listen(KeyboardEvents.ArrowDown, eventType, callback) }
-    public shiftArrowUp(callback: (e: any) => any, eventType: KeyboardEventType = 'keydown') { this.listen(KeyboardEvents.ShiftArrowUp, eventType, callback) }
-    public shiftArrowDown(callback: (e: any) => any, eventType: KeyboardEventType = 'keydown') { this.listen(KeyboardEvents.ShiftArrowDown, eventType, callback) }
-    public arrowLeft(callback: (e: any) => any, eventType: KeyboardEventType = 'keydown') { this.listen(KeyboardEvents.ArrowLeft, eventType, callback) }
-    public arrowRight(callback: (e: any) => any, eventType: KeyboardEventType = 'keydown') { this.listen(KeyboardEvents.ArrowRight, eventType, callback) }
-    public shiftArrowLeft(callback: (e: any) => any, eventType: KeyboardEventType = 'keydown') { this.listen(KeyboardEvents.ShiftArrowLeft, eventType, callback) }
-    public shiftArrowRight(callback: (e: any) => any, eventType: KeyboardEventType = 'keydown') { this.listen(KeyboardEvents.ShiftArrowRight, eventType, callback) }
-    public ctrlArrowUp(callback: (e: any) => any, eventType: KeyboardEventType = 'keydown') { this.listen(KeyboardEvents.CtrlArrowUp, eventType, callback) }
-    public ctrlArrowDown(callback: (e: any) => any, eventType: KeyboardEventType = 'keydown') { this.listen(KeyboardEvents.CtrlArrowDown, eventType, callback) }
+    public arrowUp(element: Element, callback: (e: any) => any) { this.bind(element, callback, KeyboardEvents.ArrowUp) }
+    public arrowDown(element: Element, callback: (e: any) => any) { this.bind(element, callback, KeyboardEvents.ArrowDown) }
+    public shiftArrowUp(element: Element, callback: (e: any) => any) { this.bind(element, callback, KeyboardEvents.ShiftArrowUp) }
+    public shiftArrowDown(element: Element, callback: (e: any) => any) { this.bind(element, callback, KeyboardEvents.ShiftArrowDown) }
+    public arrowLeft(element: Element, callback: (e: any) => any) { this.bind(element, callback, KeyboardEvents.ArrowLeft) }
+    public arrowRight(element: Element, callback: (e: any) => any) { this.bind(element, callback, KeyboardEvents.ArrowRight) }
+    public shiftArrowLeft(element: Element, callback: (e: any) => any) { this.bind(element, callback, KeyboardEvents.ShiftArrowLeft) }
+    public shiftArrowRight(element: Element, callback: (e: any) => any) { this.bind(element, callback, KeyboardEvents.ShiftArrowRight) }
+    public ctrlArrowUp(element: Element, callback: (e: any) => any) { this.bind(element, callback, KeyboardEvents.CtrlArrowUp) }
+    public ctrlArrowDown(element: Element, callback: (e: any) => any) { this.bind(element, callback, KeyboardEvents.CtrlArrowDown) }
+    public enter(element: Element, callback: (e: any) => any) { this.bind(element, callback, KeyboardEvents.Enter) }
+    public shiftEnter(element: Element, callback: (e: any) => any) { this.bind(element, callback, KeyboardEvents.ShiftEnter) }
 }

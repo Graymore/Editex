@@ -1,7 +1,8 @@
 import { EditexConfig, EditexSaveComponentData, EditexCore } from './types'
-import { Builder, Handler, State, Keyboard } from './core'
+import { Handler, State, Keyboard } from './core'
+import Builder from "./Builder.ts";
 import { Image, Popup, Text } from './components'
-import { useCaret, useSelection } from "./utils";
+import { useSelection, useEditor } from "./utils";
 
 export default class Editex {
 
@@ -23,7 +24,7 @@ export default class Editex {
 
         const editexGlobalObject = 'editex' in window ? window.editex : (window as any).editex = {}
         const editexElement = this.getEditor(element)
-        const editexDefineComponents = config?.components || [Text, Image]
+        const editexDefineComponents = config?.components || [Text]
 
         // Init Core
         this.Handler = new Handler({
@@ -41,21 +42,15 @@ export default class Editex {
             handler: this.Handler,
             state: this.State,
             keyboard: this.Keyboard,
-            useCaret: useCaret,
             useSelection: useSelection,
+            useEditor: useEditor,
         }
 
         this.Popup = new Popup(core)
         this.Text = new Text()
 
         if (editexElement !== null && editexElement !== undefined) {
-            this.Builder = new Builder({
-                element: editexElement,
-                State: this.State,
-                Text: this.Text,
-                Handler: this.Handler,
-                Popup: this.Popup
-            }, core)
+            this.Builder = new Builder(editexElement, core)
             this.Builder.renderComponent(config?.defaultComponent || null)
         } else {
             this.Handler.warnings().elementIsNotFound()

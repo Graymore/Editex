@@ -1,5 +1,4 @@
 import { EditexCore } from "../types";
-import { useMenu } from "../utils";
 import classes from "../utils/classes";
 
 export default class Popup {
@@ -23,7 +22,7 @@ export default class Popup {
         popup.appendChild(popupWrapper)
         document.body.appendChild(popup)
 
-        editor.on('input', event => useMenu().findCommand(event.target.textContent) ? this.show() : this.hide())
+        editor.on('input', event => core.useEditor().parseSyntaxPhrase(event.target.textContent) ? this.show() : this.hide())
         editor.on('enter', () => this.hide())
 
         components.forEach(component => {

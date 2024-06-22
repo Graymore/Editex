@@ -40,8 +40,8 @@ export interface EditexCore {
     handler: Handler,
     state: State
     keyboard: Keyboard
-    useCaret: () => any
     useSelection: () => any
+    useEditor: () => any
 }
 
 export type EditexComponentType = 'component' | 'tool'
