@@ -19,8 +19,8 @@ export function useEditor() {
         return result
     }
 
-    function editableContains(element: Element) {
-        return element.querySelector('[contenteditable=true]') !== null
+    function getEditableElement(element: Element) {
+        return element.querySelector('[contenteditable=true]')
     }
 
     function genUID() {
@@ -29,7 +29,7 @@ export function useEditor() {
 
     return {
         parseSyntaxPhrase,
-        editableContains,
+        getEditableElement,
         genUID,
     }
 }

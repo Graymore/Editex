@@ -1,6 +1,8 @@
-export function useSelection() {
+import { SelectionContext, Selection } from "../types";
 
-    function get() {
+export function useSelection(): Selection {
+
+    function get(): SelectionContext | null {
         const selection = document.getSelection()
 
         if (selection) {
@@ -10,13 +12,29 @@ export function useSelection() {
             const range = Math.abs(start - end)
             const rect = rangeSel.getBoundingClientRect()
             const node = selection.anchorNode
-            const parentNode = selection.anchorNode?.parentNode
-            const length = selection.anchorNode?.textContent?.length
+            const parentNode = selection.anchorNode?.parentNode || null
+            const parentNodeFirstChild = selection.anchorNode?.parentNode?.firstChild || null
+            const parentNodeLastChild = selection.anchorNode?.parentNode?.lastChild || null
+            const length = selection.anchorNode?.textContent?.length || 0
             const contents = rangeSel.cloneContents()
             const contentsText = rangeSel.cloneContents().textContent
 
-            return { start, end, range, node, length, contents, contentsText, rect, parentNode }
+            return {
+                start,
+                end,
+                range,
+                node,
+                length,
+                contents,
+                contentsText,
+                rect,
+                parentNode,
+                parentNodeFirstChild,
+                parentNodeLastChild
+            }
         }
+
+        return null
     }
 
     function setRange(element: Element, position: number) {

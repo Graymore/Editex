@@ -1,4 +1,4 @@
-import { Handler, Keyboard, State } from "../core";
+import {Handler, Keyboard, State, Block} from "../core";
 
 declare global {
     interface Window {
@@ -40,8 +40,10 @@ export interface EditexCore {
     handler: Handler,
     state: State
     keyboard: Keyboard
+    block: Block
     useSelection: () => any
     useEditor: () => any
+    useDOM: () => any
 }
 
 export type EditexComponentType = 'component' | 'tool'

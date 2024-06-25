@@ -1,4 +1,4 @@
-import { BuilderComponent, BuilderConfig } from "./builder";
+import { BuilderComponent } from "./builder";
 import { DOMConfig } from "./dom";
 
 import {
@@ -16,6 +16,8 @@ import {
 import { HandlerHooks, HandlerEvent, HandlerEventTypes } from "./handler";
 
 import { KeyboardEventItem, KeyboardEventType } from "./keyboard";
+
+import { SelectionContext, Selection } from "./selection";
 
 export {
     type HandlerHooks,
@@ -36,8 +38,10 @@ export {
     type DOMConfig,
 
     type BuilderComponent,
-    type BuilderConfig,
 
     type KeyboardEventItem,
     type KeyboardEventType,
+
+    type SelectionContext,
+    type Selection,
 }

@@ -1,7 +1,8 @@
+import {Class} from "./editex";
 export interface BuilderComponent {
     uid: string,
-    class: any,
-    render: any,
+    class: Class,
+    render: HTMLElement,
     block: HTMLElement,
     created: string
 }

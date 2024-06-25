@@ -1,8 +1,8 @@
 import { EditexConfig, EditexSaveComponentData, EditexCore } from './types'
-import { Handler, State, Keyboard } from './core'
+import { Handler, State, Keyboard, Block } from './core'
 import Builder from "./Builder.ts";
 import { Image, Popup, Text } from './components'
-import { useSelection, useEditor } from "./utils";
+import { useSelection, useEditor, useDom } from "./utils";
 
 export default class Editex {
 
@@ -13,6 +13,7 @@ export default class Editex {
     protected State: State
     protected Keyboard: Keyboard
     protected Handler: Handler
+    protected Block: Block
 
     /**
      * Main Components
@@ -37,13 +38,16 @@ export default class Editex {
 
         this.State = new State(editexDefineComponents)
         this.Keyboard = new Keyboard()
+        this.Block = new Block()
 
         const core: EditexCore = {
             handler: this.Handler,
             state: this.State,
             keyboard: this.Keyboard,
+            block: this.Block,
             useSelection: useSelection,
             useEditor: useEditor,
+            useDOM: useDom,
         }
 
         this.Popup = new Popup(core)

@@ -14,6 +14,7 @@ enum KeyboardEvents {
 }
 
 export default class Keyboard {
+
     private bind(element: Element, callback: (e?: any) => any, eventType: KeyboardEvents) {
         element.addEventListener('keydown', (ev) => {
             if (this.shortcuts((ev as KeyboardEvent)) === eventType) return callback(ev)
